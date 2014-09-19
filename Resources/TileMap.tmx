@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="32" height="24" tilewidth="32" tileheight="32" backgroundcolor="#808080">
+ <tileset firstgid="1" name="tmw_desert_spacing" tilewidth="32" tileheight="32" spacing="1" margin="1">
+  <image source="tmw_desert_spacing.png" width="265" height="199"/>
+ </tileset>
+ <objectgroup name="Sprites">
+  <object type="1" gid="15" x="256" y="256"/>
+  <object type="1" gid="15" x="96" y="352"/>
+  <object type="1" gid="15" x="224" y="480"/>
+  <object type="1" gid="15" x="576" y="256"/>
+  <object type="1" gid="15" x="864" y="224"/>
+  <object type="1" gid="15" x="800" y="640"/>
+  <object type="1" gid="15" x="544" y="576"/>
+  <object type="2" gid="38" x="224" y="384"/>
+  <object type="2" gid="38" x="32" y="576"/>
+  <object type="2" gid="38" x="320" y="704"/>
+  <object type="2" gid="38" x="640" y="128"/>
+  <object type="2" gid="38" x="800" y="384"/>
+  <object type="2" gid="38" x="960" y="512"/>
+  <object type="2" gid="38" x="608" y="736"/>
+  <object type="4" gid="39" x="448" y="32"/>
+  <object type="4" gid="39" x="384" y="160"/>
+  <object type="4" gid="39" x="416" y="416"/>
+  <object type="4" gid="39" x="672" y="384"/>
+  <object type="4" gid="39" x="192" y="640"/>
+  <object type="4" gid="39" x="928" y="736"/>
+  <object type="4" gid="39" x="576" y="640"/>
+ </objectgroup>
+ <layer name="WallLayer" width="32" height="24">
+  <properties>
+   <property name="Collidable" value="true"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJy1VVsOwCAI89v7H9hfY6Av1WTJMqGtCN0Y/9Y8nptcB6eKZXmOvgpbwUcx1R47c1LXLvfE2feRNsah7rF6Mqx5vHf6UC1RjNqPjm6HX10Jv1tvlZ/1rsP1Yqa7XHf2Ez7Gn9xT4kGqNqfXkXd0HI42loPqoP43fvWVc5bUU9R6v5hpxMe4knqkWGkPul6g+JvDr/IiDYmuPY/5pOLDCT+Ld/zbuX/mfSiuw+zW7Vx0mEoPVN8WiSMHqQ==
+  </data>
+ </layer>
+ <objectgroup draworder="index" name="Spe_Place">
+  <object name="Orig" gid="31" x="0" y="32"/>
+  <object name="Dest" gid="46" x="992" y="768"/>
+  <object name="Orig" gid="31" x="0" y="0"/>
+ </objectgroup>
+</map>
