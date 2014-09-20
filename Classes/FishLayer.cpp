@@ -140,21 +140,29 @@ bool FishLayer::onContactBegin(const PhysicsContact& contact)
 {
     MySprite *sp1 = (MySprite*)contact.getShapeA()->getBody()->getNode();
     MySprite *sp2 = (MySprite*)contact.getShapeB()->getBody()->getNode();
-    MySprite *sp = nullptr;
-    if(sp1->getFood() == sp2->getType())
-        sp = sp2;
-    else
-        sp = sp1;
     
-    if((sp1 == m_DestSp && sp2 == m_Player) || (sp2 == m_DestSp && sp1 == m_Player))
+    
+    
+    MySprite *loser = nullptr;
+    MySprite *winner = nullptr;
+    if(sp1->getFood() == sp2->getType())
+        loser = sp2;
+    else
+        loser = sp1;
+    
+    winner = loser == sp1 ? sp2 : sp1;
+    
+    CCLOG("onContactBegin, remove %d", loser->getType());
+    
+    if((loser ==  m_Player) || (sp1 == m_DestSp && sp2 == m_Player) || (sp2 == m_DestSp && sp1 == m_Player))
     {
         m_Started = _T_ST_Completed;
         return true;
     }
     
-    CCLOG("onContactBegin, remove %d", sp->getType());
     
-    removeSprite(sp);
+    winner->addEatCount(loser->getEatCount());
+    removeSprite(loser);
     
     return true;
 }
@@ -385,7 +393,7 @@ Vec2 FishLayer::getNearestTarDir(cocos2d::Vec2 fromTag, int tarType, int enemyTy
         {
             if(v == enemyDir)
                 continue;
-            if(m_MapLayer->CheckAvilable(v) != true)
+            if(m_MapLayer->CheckAvilableByTag(v) != true)
                 continue;
             ret = v;
             if(ret.distance(enemyDir) > 1)

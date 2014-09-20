@@ -35,14 +35,18 @@ enum MySpriteType
     _ST_End     = 0xff
 };
 
-class MySprite2DFactory;
+
 class Fish : public cocos2d::Sprite
 {
 public:
-    Fish() : m_Color(cocos2d::Color3B(255,255,255)) {}
+    Fish();
+    
+    void update(float dt);
     virtual bool initWithFile(std::string file);
     static Fish *create(Fish *fish);
     int getType() {return m_SpriteType;}
+    int getEatCount() {return m_EatCount;}
+    void addEatCount(int cnt) {m_EatCount += cnt;}
     virtual int getEnemy() {return 0;}
     virtual int getFood() {return 0;}
     
@@ -52,11 +56,17 @@ protected:
     int                 m_SpriteType;
     cocos2d::Color3B    m_Color;
     cocos2d::Map<int, cocos2d::Action*>      m_Actions;
-
-
+    int                 m_EatCount;
+    cocos2d::LabelAtlas *m_Count;
 };
 
-
+//对象工厂
+class MySprite2DFactory
+{
+public:
+    Fish *Create(int type);
+    
+};
 
 class Scissor : public Fish
 {
@@ -103,12 +113,6 @@ public:
     friend class MySprite2DFactory;
 };
 
-//对象工厂
-class MySprite2DFactory
-{
-public:
-    Fish *Create(int type);
-    
-};
+
 
 #endif

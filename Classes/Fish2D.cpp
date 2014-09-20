@@ -12,6 +12,12 @@
 
 USING_NS_CC;
 
+Fish::Fish()
+: m_Color(cocos2d::Color3B(255,255,255)), m_EatCount(1), m_Count(0)
+{
+    
+}
+
 Fish *Fish::create(Fish *fish)
 {
     if(fish && fish->initWithFile(fish->m_ModelFile))
@@ -31,7 +37,28 @@ bool Fish::initWithFile(std::string file)
 {
     Sprite::initWithFile(file);
     setColor(m_Color);
+    
+    if(m_SpriteType <= _ST_Burden)
+    {
+        m_Count = LabelAtlas::create("0:", "numbersPic.png", 14, 21, '0');
+        
+        m_Count->setPosition(Vec2::ZERO);
+        addChild(m_Count);
+    }
+    
+    scheduleUpdate();
     return true;
+}
+
+void Fish::update(float dt)
+{
+    if(m_Count)
+    {
+        char str[3] = {0};
+        sprintf(str, "%d", m_EatCount);
+
+        m_Count->setString(str);
+    }
 }
 
 void Fish::setBodyContactMask()
@@ -70,17 +97,17 @@ Wall::Wall()
     m_SpriteType = _ST_Wall;
 }
 
+Dest::Dest()
+{
+    m_ModelFile = "dest.png";
+    m_SpriteType = _ST_Dest;
+}
+
 void Wall::setBodyContactMask()
 {
     auto body = getPhysicsBody();
     body->setCategoryBitmask(_ST_Wall);
     body->setCollisionBitmask(_ST_End);
-}
-
-Dest::Dest()
-{
-    m_ModelFile = "dest.png";
-    m_SpriteType = _ST_Dest;
 }
 
 MySprite *MySprite2DFactory::Create(int type)
