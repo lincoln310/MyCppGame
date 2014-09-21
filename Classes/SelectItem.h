@@ -21,28 +21,30 @@ class SelectItem : public MenuItemImage
 {
 public:
     SelectItem(int type);
+    
+    static SelectItem *create(int type);
+    
+    bool init();
 
     static std::string getImg(int type);
     
+    void onTouchEnded();
+    
     int ItemType;
-    Vec2 ItemPos;
 };
 
-class SelectItemLayer : public Menu
+class SelectItemLayer : public Layer
 {
 public:
-    static SelectItemLayer *create(const Size &tagSize, const std::vector<int> &types, const Vec2 &spPoi);
+    static SelectItemLayer *create(const Size &tagSize, const std::vector<int> &types);
     //static SelectItemLayer *createWithArray(const Vector<MenuItem*>& arrayOfItems);
-    bool initWithArray(const Vector<MenuItem*>& arrayOfItems, const Vec2 &poi);
+    bool initWithArray(const Size &tagSize, const std::vector<int> &types);
+    
+    void setPlayer(MySprite *sp);
     
     void onTouchEnded(Touch *touch, Event *event);
     
-    
-protected:
-    FishLayer *m_FishLayer;
-    std::vector<SelectItem*> m_Items;
-    Size        m_TagSize;
-    Vec2        m_SpPoi;
+    void onSelectSpriteEvent(EventCustom *event);
 };
 
 
