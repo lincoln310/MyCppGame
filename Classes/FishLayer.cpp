@@ -53,18 +53,18 @@ void FishLayer::complete()
 	m_CompleteTime = time(&m_CompleteTime);
 	m_Status = _T_ST_Completed;
     
-    if(m_Player)
-    {
-        m_Player->removeFromParent();
-        m_Player = nullptr;
-    }
-    
     auto l_LayerComplete = Layer_Complete::create(this);
     
     if(l_LayerComplete)
     {
         l_LayerComplete->setPosition(Director::getInstance()->getVisibleSize() / 2);
         addChild(l_LayerComplete);
+    }
+    
+    if(m_Player)
+    {
+        m_Player->removeFromParent();
+        m_Player = nullptr;
     }
 }
 
