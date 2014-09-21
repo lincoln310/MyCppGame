@@ -14,16 +14,18 @@
 
 NS_CC_BEGIN
 
-class Menu_complete : public Menu
+class Layer_Complete : public Layer
 {
 public:
-    static Menu_complete *create(FishLayer *layer);
-    //CREATE_FUNC(Menu_complete);
+    static Layer_Complete *create(FishLayer *layer);
     
     bool init(FishLayer *layer);
-protected:
+    
     void reset();
+protected:
     FishLayer *m_Layer;
+    LabelAtlas  *m_time;
+    LabelAtlas  *m_enegy;
 };
 
 

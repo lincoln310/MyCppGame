@@ -4,6 +4,8 @@
 #include "SelectItem.h"
 #include "Menu_Complete.h"
 #include <iostream>
+#include <random>
+#include <time.h>
 
 USING_NS_CC;
 using namespace std;
@@ -33,11 +35,44 @@ void FishLayer::reset()
     }
     m_Sprites.clear();
     
-    m_Started = _T_ST_Waiting;
+    m_Status = _T_ST_Waiting;
     
     m_Direction = Vec2(0, 0);
     
     setMapLayer(m_MapLayer);
+}
+
+void FishLayer::start()
+{
+	m_StartTime = time(&m_StartTime);
+	m_Status = _T_ST_Started;
+}
+
+void FishLayer::complete()
+{
+	m_CompleteTime = time(&m_CompleteTime);
+	m_Status = _T_ST_Completed;
+    
+    if(m_Player)
+    {
+        m_Player->removeFromParent();
+        m_Player = nullptr;
+    }
+    
+    auto l_LayerComplete = Layer_Complete::create(this);
+    
+    if(l_LayerComplete)
+    {
+        l_LayerComplete->setPosition(Director::getInstance()->getVisibleSize() / 2);
+        addChild(l_LayerComplete);
+    }
+}
+
+void FishLayer::setPlayer(MySprite *sp)
+{
+    m_Player = sp;
+    m_Player->setPosition(m_Orig);
+    addChild(sp);
 }
 
 void FishLayer::setSpritePosition(MySprite *sp, Vec2 tileTag)
@@ -116,7 +151,7 @@ void FishLayer::setMapLayer(MapLayer *mapLayer)
 bool FishLayer::init()
 {
     //addStaticItem(this);
-    m_Started = _T_ST_Waiting;
+    m_Status = _T_ST_Waiting;
     
     scheduleUpdate();
     
@@ -132,7 +167,7 @@ bool FishLayer::init()
     auto contactListener = EventListenerPhysicsContact::create();
     contactListener->onContactBegin = CC_CALLBACK_1(FishLayer::onContactBegin, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(contactListener, this);
-    
+
     return true;
 }
 
@@ -156,7 +191,7 @@ bool FishLayer::onContactBegin(const PhysicsContact& contact)
     
     if((loser ==  m_Player) || (sp1 == m_DestSp && sp2 == m_Player) || (sp2 == m_DestSp && sp1 == m_Player))
     {
-        m_Started = _T_ST_Completed;
+        complete();
         return true;
     }
     
@@ -182,19 +217,15 @@ void FishLayer::onTouchMoved(Touch *touch, Event *event)
 
 void FishLayer::onTouchEnded(cocos2d::Touch *touch, cocos2d::Event *unused_event)
 {
-    auto touchLocation = touch->getLocation();
-    
-    auto tag = m_MapLayer->TileCoordForPosition(touchLocation);
-    if(m_Started == _T_ST_Waiting)
+    if(m_Status == _T_ST_Waiting)
     {
-        auto pos = m_MapLayer->TileCoordToPositionMid(tag);
         int typeSt[3] = {1, 2, 4};
         static vector<int> types(&typeSt[0], &typeSt[3]);
-        Menu *l_SelectItem = SelectItemLayer::create(m_MapLayer->GetTileSize(), types, m_Orig);
-        if(l_SelectItem )
+        auto l_LayerSelect = SelectItemLayer::create(m_MapLayer->GetTileSize(), types);
+        if(l_LayerSelect )
         {
-            l_SelectItem->setPosition(Director::getInstance()->getVisibleSize() / 2);
-            addChild(l_SelectItem);
+            l_LayerSelect->setPosition(Director::getInstance()->getVisibleSize() / 2);
+            addChild(l_LayerSelect);
         }
     }
 }
@@ -212,25 +243,8 @@ void FishLayer::removeSprite(MySprite *sp)
 
 void FishLayer::update(float dt)
 {
-    if(m_Player != nullptr && m_Started == _T_ST_Waiting)
-    {
-        m_Started = _T_ST_Started;
-    }
     
-    if(m_Started == _T_ST_Completed)
-    {
-        Menu *l_MenuReset = Menu_complete::create(this);
-        
-        if(l_MenuReset)
-        {
-            l_MenuReset->setPosition(Director::getInstance()->getVisibleSize() / 2);
-            addChild(l_MenuReset);
-            m_Started = _T_ST_Reset;
-        }
-        return;
-    }
-    
-    if(m_Started != _T_ST_Started)
+    if(m_Status != _T_ST_Started)
         return;
     
     //player update
@@ -389,16 +403,23 @@ Vec2 FishLayer::getNearestTarDir(cocos2d::Vec2 fromTag, int tarType, int enemyTy
     if(IsFood != true)
     {
         vector<Vec2> l_nexts = m_MapLayer->GetAligns(fromTag);
+        vector<Vec2> l_Available;
         for(Vec2 v : l_nexts)
         {
             if(v == enemyDir)
                 continue;
             if(m_MapLayer->CheckAvilableByTag(v) != true)
                 continue;
-            ret = v;
-            if(ret.distance(enemyDir) > 1)
-                break;
+            l_Available.push_back(v);
         }
+        
+        if(l_Available.size() == 0)
+            l_Available.push_back(enemyDir);
+        
+        uniform_int_distribution<unsigned> u(0,l_Available.size() - 1);//生成0到size（包含）均匀分布的随机数
+        default_random_engine e;//生成随机无符号数
+        int l_r = u(e);
+        ret = l_Available[l_r];
     }
     return ret;
 }

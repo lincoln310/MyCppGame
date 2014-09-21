@@ -7,6 +7,7 @@
 //#include "Fish3D.h"
 
 #include "MapLayer.h"
+#include "SelectItem.h"
 
 NS_CC_BEGIN
 
@@ -31,7 +32,8 @@ public:
 
     void update(float dt);
     
-    void setPlayer(MySprite *sp) {m_Player = sp; addChild(sp);}
+    void setPlayer(MySprite *sp) ;
+    MySprite *getPlayer() {return m_Player;}
     
     void addSprite(MySprite *sp);
     
@@ -44,6 +46,13 @@ public:
     void setPhyWorld(PhysicsWorld *world) {m_world = world;}
     
     void reset();
+
+    void start();
+
+    void complete();
+    
+    time_t getUsedTime(){ return m_CompleteTime - m_StartTime;}
+    
 protected:
     cocos2d::Vec2 getNextPosition(MySprite *sp);
     
@@ -54,6 +63,7 @@ protected:
     void onTouchEnded(Touch *touch, Event *event);
     
     void onTouchMoved(Touch *touch, Event *event);
+
 
     MapLayer                        *m_MapLayer;
     
@@ -68,9 +78,13 @@ protected:
     
     PhysicsWorld                    *m_world;
     
-    int                             m_Started;
+    int                             m_Status;
     
     Vec2                            m_Direction;
+    
+    time_t                          m_StartTime;
+
+    time_t							m_CompleteTime;
 };
 
 NS_CC_END
